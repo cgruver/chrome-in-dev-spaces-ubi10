@@ -15,12 +15,69 @@ components:
       - exposure: public
         name: kasmvnc
         targetPort: 8444
-        secure: true
-        attributes:
-          # type: main
-          cookiesAuthEnabled: true
-          # discoverable: false
-          urlRewriteSupported: true
+        protocol: https
+- name: oauth-proxy
+  attributes:
+    pod-overrides:
+      metadata:
+        labels:
+          app: proxy
+      spec:
+        volumes:
+        - name: proxy-tls
+          secret:
+            secretName: proxy-tls
+    container-overrides: 
+      volumeMounts:
+        - mountPath: /etc/tls/private
+          name: proxy-tls
+  container:
+    image: image-registry.openshift-image-registry.svc:5000/openshift/oauth-proxy:v4.4
+    args:
+    - --https-address=:8443
+    - --provider=openshift
+    - --upstream=http://localhost:8444
+    - --tls-cert=/etc/tls/private/tls.crt
+    - --tls-key=/etc/tls/private/tls.key
+    - --cookie-secret=SECRET
+    endpoints:
+      - exposure: none
+        name: proxy
+        protocol: https
+        targetPort: 8443
+- name: oauth-route
+  openshift:
+    deployByDefault: true
+    inlined: |
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        name: proxy
+      spec:
+        to:
+          kind: Service
+          name: proxy
+        tls:
+          termination: Reencrypt
+- name: oauth-service
+  openshift:
+    deployByDefault: true
+    inlined: |
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: proxy
+        annotations:
+          service.alpha.openshift.io/serving-cert-secret-name: proxy-tls
+      spec:
+        ports:
+        - name: proxy
+          port: 443
+          targetPort: 8443
+        selector:
+          app: proxy
 - volume:
     size: 20Gi
   name: projects
+
+  
