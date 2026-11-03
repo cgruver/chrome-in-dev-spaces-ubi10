@@ -1,6 +1,6 @@
 schemaVersion: 2.3.0
 metadata:
-  name: devspaces-chrome
+  name: devspaces-chrome-oauth
 attributes:
   pod-overrides:
     metadata:
