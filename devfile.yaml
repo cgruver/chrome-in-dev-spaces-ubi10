@@ -11,11 +11,6 @@ attributes:
       - name: proxy-tls
         secret:
           secretName: proxy-tls
-  container-overrides:
-  - name: oauth-proxy
-    volumeMounts:
-      - mountPath: /etc/tls/private
-        name: proxy-tls
 components:
 - name: dev-tools
   container:
@@ -32,6 +27,11 @@ components:
         targetPort: 8444
         protocol: http
 - name: oauth-proxy
+  attributes:
+    container-overrides:
+      volumeMounts:
+        - mountPath: /etc/tls/private
+          name: proxy-tls
   container:
     image: image-registry.openshift-image-registry.svc:5000/openshift/oauth-proxy:v4.4
     args:
