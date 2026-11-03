@@ -1,5 +1,32 @@
 # chrome-in-dev-spaces-ubi10
 
+```yaml
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: proxy
+spec:
+  to:
+    kind: Service
+    name: proxy
+  tls:
+    termination: Passthrough
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxy
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: proxy-tls
+spec:
+  ports:
+  - name: proxy
+    port: 443
+    targetPort: 8443
+  selector:
+    app: proxy
+```
+
 ```bash
 if [ ! -d ${HOME}/.config/google-chrome ]
 then
@@ -18,7 +45,7 @@ fi
 cat << EOF > ${HOME}/.vnc/kasmvnc.yaml
 network:
   websocket_port: 8444
-  interface: 0.0.0.0
+  interface: 127.0.0.1
   protocol: http
   ssl:
     require_ssl: false
@@ -46,80 +73,4 @@ export $(dbus-launch)
 /usr/bin/google-chrome --display=:0 --disable-gpu --disable-software-rasterizer --disable-dev-shm-usage --disable-plugins --disable-plugins-discovery --disable-notifications --disable-sync --mute-audio --dns-prefetch-disable --noremote --start-maximized > /tmp/chrome.out 2>&1 &
 ```
 
-```yaml
-kind: List
-apiVersion: v1
-items:
-# Create a proxy service account and ensure it will use the route "proxy"
-- apiVersion: v1
-  kind: ServiceAccount
-  metadata:
-    name: proxy
-    annotations:
-      serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"proxy"}}'
-# Create a secure connection to the proxy via a route
-- apiVersion: route.openshift.io/v1
-  kind: Route
-  metadata:
-    name: proxy
-  spec:
-    to:
-      kind: Service
-      name: proxy
-    tls:
-      termination: Reencrypt
-- apiVersion: v1
-  kind: Service
-  metadata:
-    name: proxy
-    annotations:
-      service.alpha.openshift.io/serving-cert-secret-name: proxy-tls
-  spec:
-    ports:
-    - name: proxy
-      port: 443
-      targetPort: 8443
-    selector:
-      app: proxy
-# Launch a proxy as a sidecar
-- apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: proxy
-  spec:
-    replicas: 1
-    selector:
-      matchLabels:
-        app: proxy
-    template:
-      metadata:
-        labels:
-          app: proxy
-      spec:
-        serviceAccountName: proxy
-        containers:
-        - name: oauth-proxy
-          image: image-registry.openshift-image-registry.svc:5000/openshift/oauth-proxy:v4.4
-          imagePullPolicy: IfNotPresent
-          ports:
-          - containerPort: 8443
-            name: public
-          args:
-          - --https-address=:8443
-          - --provider=openshift
-          - --openshift-service-account=proxy
-          - --upstream=http://localhost:8080
-          - --tls-cert=/etc/tls/private/tls.crt
-          - --tls-key=/etc/tls/private/tls.key
-          - --cookie-secret=SECRET
-          volumeMounts:
-          - mountPath: /etc/tls/private
-            name: proxy-tls
 
-        - name: app
-          image: openshift/hello-openshift:latest
-        volumes:
-        - name: proxy-tls
-          secret:
-            secretName: proxy-tls
-```
