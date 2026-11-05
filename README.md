@@ -25,6 +25,36 @@ EOF
 ```
 
 ```yaml
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: devspaces-oauth-proxy-dependencies
+  namespace: openshift-devspaces
+  labels:
+    app.kubernetes.io/part-of: che.eclipse.org
+    app.kubernetes.io/component: workspaces-config
+objects:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: oauth-proxy
+    annotations:
+      serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"oauth-proxy"}}'
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: oauth-proxy
+    labels:
+      controller.devfile.io/mount-to-devworkspace: "true"
+      controller.devfile.io/watch-secret: "true"
+    annotations:
+      kubernetes.io/service-account.name: oauth-proxy
+      controller.devfile.io/mount-as: file
+      controller.devfile.io/mount-path: /var/run/oauth-client
+  type: kubernetes.io/service-account-token
+```
+
+```yaml
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
@@ -67,6 +97,11 @@ spec:
 ```
 
 ```bash
+COOKIE_SECRET=$(openssl rand -base64 32)
+
+/usr/bin/oauth-proxy --http-address=:4180 --provider=openshift --https-address= --upstream=http://localhost:8444 --cookie-secret=${COOKIE_SECRET} --cookie-secure=true --pass-basic-auth=false --skip-provider-button=true --client-id=system:serviceaccount:${WORKSPACE_NAMESPACE}:wizard-oauth --client-secret-file=/var/run/oauth-client/token --openshift-ca=/etc/pki/tls/cert.pem --openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt --openshift-sar={"namespace":"${WORKSPACE_NAMESPACE}","resource":"pods","verb":"get"}
+
+
 if [ ! -d ${HOME}/.config/google-chrome ]
 then
   mkdir -p ${HOME}/.config/google-chrome

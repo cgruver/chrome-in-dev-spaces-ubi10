@@ -19,21 +19,22 @@ components:
 - name: oauth-proxy
   container:
     image: image-registry.openshift-image-registry.svc:5000/openshift/oauth-proxy:v4.4
-    args:
-    - --http-address=:4180
-    - --provider=openshift
-    - --https-address=
-    - --upstream=http://localhost:8444
-    - --cookie-secret=SECRET
-    - --cookie-secure=true
-    - --pass-basic-auth=false
-    - --skip-provider-button=true
-    # - --openshift-service-account=$(DEVWORKSPACE_ID)-sa
-    - --client-id=system:serviceaccount:${WORKSPACE_NAMESPACE}:wizard-oauth
-    - --client-secret-file=/var/run/oauth-client/token
-    - --openshift-ca=/etc/pki/tls/cert.pem
-    - --openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-    - --openshift-sar={"namespace":"${WORKSPACE_NAMESPACE}","resource":"pods","verb":"get"}
+    command: ["tail", "-f", "/dev/null"]
+    # args:
+    # - --http-address=:4180
+    # - --provider=openshift
+    # - --https-address=
+    # - --upstream=http://localhost:8444
+    # - --cookie-secret=SECRET
+    # - --cookie-secure=true
+    # - --pass-basic-auth=false
+    # - --skip-provider-button=true
+    # # - --openshift-service-account=$(DEVWORKSPACE_ID)-sa
+    # - --client-id=system:serviceaccount:${WORKSPACE_NAMESPACE}:oauth-proxy
+    # - --client-secret-file=/var/run/oauth-client/token
+    # - --openshift-ca=/etc/pki/tls/cert.pem
+    # - --openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    # - --openshift-sar={"namespace":"${WORKSPACE_NAMESPACE}","resource":"pods","verb":"get"}
     endpoints:
       - exposure: internal
         name: oauth-proxy
