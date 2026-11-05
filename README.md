@@ -28,6 +28,21 @@ EOF
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
+  name: oauth-proxy
+spec:
+  to:
+    kind: Service
+    name: oauth-proxy
+    weight: 100
+  port:
+    targetPort: 4180
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
   name: proxy
 spec:
   to:
