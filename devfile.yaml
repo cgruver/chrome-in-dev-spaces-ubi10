@@ -28,12 +28,12 @@ components:
     - --cookie-secure=true
     - --pass-basic-auth=false
     - --skip-provider-button=true
-    - --openshift-service-account=$(DEVWORKSPACE_ID)-sa
-    - --client-id=system:serviceaccount:$(WORKSPACE_NAMESPACE):wizard-oauth
+    # - --openshift-service-account=$(DEVWORKSPACE_ID)-sa
+    - --client-id=system:serviceaccount:${WORKSPACE_NAMESPACE}:wizard-oauth
     - --client-secret-file=/var/run/oauth-client/token
     - --openshift-ca=/etc/pki/tls/cert.pem
     - --openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-    - --openshift-sar={"namespace":"$(WORKSPACE_NAMESPACE)","resource":"pods","verb":"get"}
+    - --openshift-sar={"namespace":"${WORKSPACE_NAMESPACE}","resource":"pods","verb":"get"}
     endpoints:
       - exposure: internal
         name: oauth-proxy
