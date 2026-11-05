@@ -1,16 +1,6 @@
 schemaVersion: 2.3.0
 metadata:
   name: devspaces-chrome-oauth
-attributes:
-  pod-overrides:
-    metadata:
-      labels:
-        app: proxy
-    spec:
-      volumes:
-      - name: proxy-tls
-        secret:
-          secretName: proxy-tls
 components:
 - name: dev-tools
   container:
@@ -27,41 +17,48 @@ components:
         targetPort: 8444
         protocol: http
 - name: oauth-proxy
-  attributes:
-    container-overrides:
-      volumeMounts:
-        - mountPath: /etc/tls/private
-          name: proxy-tls
   container:
     image: image-registry.openshift-image-registry.svc:5000/openshift/oauth-proxy:v4.4
     args:
-    - --https-address=:8443
+    - --http-address=:4180
     - --provider=openshift
+    - --https-address=
     - --upstream=http://localhost:8444
-    - --tls-cert=/etc/tls/private/tls.crt
-    - --tls-key=/etc/tls/private/tls.key
     - --cookie-secret=SECRET
+    - --cookie-secure=true
+    - --pass-basic-auth=false
+    - --skip-provider-button=true
     - --openshift-service-account=$(DEVWORKSPACE_ID)-sa
-    # - --openshift-service-account=workspaced50a06d73e854abd-sa
+    - --client-id=system:serviceaccount:$(WORKSPACE_NAMESPACE):wizard-oauth
+    - --client-secret-file=/var/run/oauth-client/token
+    - --openshift-ca=/etc/pki/tls/cert.pem
+    - --openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    - --openshift-sar={"namespace":"$(WORKSPACE_NAMESPACE)","resource":"pods","verb":"get"}
     endpoints:
-      - exposure: none
-        name: proxy
-        protocol: https
-        targetPort: 8443
-# - name: oauth-route
-#   openshift:
-#     deployByDefault: true
-#     inlined: |
-#       apiVersion: route.openshift.io/v1
-#       kind: Route
-#       metadata:
-#         name: proxy
-#       spec:
-#         to:
-#           kind: Service
-#           name: proxy
-#         tls:
-#           termination: Reencrypt
+      - exposure: internal
+        name: oauth-proxy
+        protocol: http
+        targetPort: 4180
+        attributes:
+          discoverable: true
+- name: oauth-route
+  openshift:
+    deployByDefault: true
+    inlined: |
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        name: oauth-proxy
+      spec:
+        to:
+          kind: Service
+          name: oauth-proxy
+          weight: 100
+        port:
+          targetPort: 4180
+        tls:
+          termination: edge
+          insecureEdgeTerminationPolicy: Redirect
 # - name: oauth-service
 #   openshift:
 #     deployByDefault: true

@@ -1,5 +1,29 @@
 # chrome-in-dev-spaces-ubi10
 
+```bash
+oc apply -f - <<'EOF'
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: oauth-proxy
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"oauth-proxy"}}'
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: oauth-proxy
+  labels:
+    controller.devfile.io/mount-to-devworkspace: "true"
+    controller.devfile.io/watch-secret: "true"
+  annotations:
+    kubernetes.io/service-account.name: oauth-proxy
+    controller.devfile.io/mount-as: file
+    controller.devfile.io/mount-path: /var/run/oauth-client
+type: kubernetes.io/service-account-token
+EOF
+```
+
 ```yaml
 apiVersion: route.openshift.io/v1
 kind: Route
