@@ -27,41 +27,24 @@ components:
         targetPort: 4180
         attributes:
           discoverable: true
-# - name: oauth-route
-#   openshift:
-#     deployByDefault: true
-#     inlined: |
-#       apiVersion: route.openshift.io/v1
-#       kind: Route
-#       metadata:
-#         name: oauth-proxy
-#       spec:
-#         to:
-#           kind: Service
-#           name: oauth-proxy
-#           weight: 100
-#         port:
-#           targetPort: 4180
-#         tls:
-#           termination: edge
-#           insecureEdgeTerminationPolicy: Redirect
-# - name: oauth-service
-#   openshift:
-#     deployByDefault: true
-#     inlined: |
-#       apiVersion: v1
-#       kind: Service
-#       metadata:
-#         name: proxy
-#         annotations:
-#           service.alpha.openshift.io/serving-cert-secret-name: oauth-proxy
-#       spec:
-#         ports:
-#         - name: proxy
-#           port: 443
-#           targetPort: 8443
-#         selector:
-#           app: proxy
+- name: oauth-route
+  openshift:
+    deployByDefault: true
+    inlined: |
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        name: oauth-proxy
+      spec:
+        to:
+          kind: Service
+          name: oauth-proxy
+          weight: 100
+        port:
+          targetPort: 4180
+        tls:
+          termination: edge
+          insecureEdgeTerminationPolicy: Redirect
 - volume:
     size: 20Gi
   name: projects
