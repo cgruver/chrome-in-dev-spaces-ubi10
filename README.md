@@ -42,12 +42,6 @@ EOF
 ```
 
 ```bash
-COOKIE_SECRET=$(openssl rand -base64 32)
-OPENSHIFT_SAR="{\"namespace\":\"${DEVWORKSPACE_NAMESPACE}\",\"resource\":\"pods\",\"verb\":\"get\"}"
-
-/usr/bin/oauth-proxy --http-address=:4180 --provider=openshift --https-address= --upstream=http://localhost:8444 --cookie-secret=${COOKIE_SECRET} --cookie-secure=true --pass-basic-auth=false --skip-provider-button=true --client-id=system:serviceaccount:${DEVWORKSPACE_NAMESPACE}:oauth-proxy --client-secret-file=/var/run/oauth-client/token --openshift-ca=/etc/pki/tls/cert.pem --openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt --openshift-sar="${OPENSHIFT_SAR}"
-
-
 if [ ! -d ${HOME}/.config/google-chrome ]
 then
   mkdir -p ${HOME}/.config/google-chrome

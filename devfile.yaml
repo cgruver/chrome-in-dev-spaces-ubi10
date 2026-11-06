@@ -34,26 +34,13 @@ components:
       targetPort: 4180
       attributes:
         discoverable: true
-# - name: oauth-route
-#   openshift:
-#     deployByDefault: true
-#     inlined: |
-#       apiVersion: route.openshift.io/v1
-#       kind: Route
-#       metadata:
-#         name: oauth-proxy
-#       spec:
-#         to:
-#           kind: Service
-#           name: oauth-proxy
-#           weight: 100
-#         port:
-#           targetPort: 4180
-#         tls:
-#           termination: edge
-#           insecureEdgeTerminationPolicy: Redirect
 - volume:
     size: 20Gi
   name: projects
-
-  
+commands:
+- exec:
+    commandLine: export $(dbus-launch) && /usr/bin/google-chrome --display=:0 --disable-gpu --disable-software-rasterizer --disable-dev-shm-usage --disable-plugins --disable-plugins-discovery --disable-notifications --disable-sync --mute-audio --dns-prefetch-disable --noremote --start-maximized
+    component: dev-tools
+    workingDir: '/projects'
+    label: "Start Chrome"
+  id: chrome
