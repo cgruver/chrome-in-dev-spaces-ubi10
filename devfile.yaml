@@ -11,22 +11,29 @@ components:
     env:
     - name: SHELL
       value: "/bin/zsh"
+    - name: VSCODE_DEFAULT_WORKSPACE
+      value: "$(PROJECT_SOURCE)/vscode.code-workspace"
     endpoints:
-      - exposure: none
-        name: kasmvnc
-        targetPort: 8444
-        protocol: http
+    - exposure: none
+      name: kasmvnc
+      targetPort: 8444
+      protocol: http
 - name: oauth-proxy
   container:
     image: image-registry.openshift-image-registry.svc:5000/openshift/oauth-proxy:v4.4
-    command: ["tail", "-f", "/dev/null"]
+    command:
+    - "/bin/bash"
+    args:
+    - '-c'
+    - >-
+      COOKIE_SECRET=$(openssl rand -base64 32) && OPENSHIFT_SAR="{\"namespace\":\"${DEVWORKSPACE_NAMESPACE}\",\"resource\":\"pods\",\"verb\":\"get\"}" && /usr/bin/oauth-proxy --http-address=:4180 --provider=openshift --https-address= --upstream=http://localhost:8444 --cookie-secret=${COOKIE_SECRET} --cookie-secure=true --pass-basic-auth=false --skip-provider-button=true --client-id=system:serviceaccount:${DEVWORKSPACE_NAMESPACE}:oauth-proxy --client-secret-file=/var/run/oauth-client/token --openshift-ca=/etc/pki/tls/cert.pem --openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt --openshift-sar="${OPENSHIFT_SAR}"
     endpoints:
-      - exposure: internal
-        name: oauth-proxy
-        protocol: http
-        targetPort: 4180
-        attributes:
-          discoverable: true
+    - exposure: internal
+      name: oauth-proxy
+      protocol: http
+      targetPort: 4180
+      attributes:
+        discoverable: true
 # - name: oauth-route
 #   openshift:
 #     deployByDefault: true

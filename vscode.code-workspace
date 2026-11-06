@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"name": "chrome-in-dev-spaces-ubi10",
+			"path": "/projects/chrome-in-dev-spaces-ubi10"
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			"dbaeumer.vscode-eslint",
+			"redhat.vscode-yaml",
+			"mhutchie.git-graph",
+			"eamodio.gitlens",
+			"streetsidesoftware.code-spell-checker",
+			"cnshenj.vscode-task-manager"
+		]
+	},
+	"settings": {
+		"editor.wordWrap": "on",
+		"files.autoSave": "off",
+		"chat.disableAIFeatures": false
+	}
+}
