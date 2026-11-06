@@ -1,5 +1,7 @@
 # chrome-in-dev-spaces-ubi10
 
+As a privileged user, apply the following to the target users dev spaces namespace:
+
 ```bash
 oc apply -f - <<'EOF'
 apiVersion: v1
@@ -21,42 +23,7 @@ metadata:
     controller.devfile.io/mount-as: file
     controller.devfile.io/mount-path: /var/run/oauth-client
 type: kubernetes.io/service-account-token
-EOF
-```
-
-```yaml
-apiVersion: template.openshift.io/v1
-kind: Template
-metadata:
-  name: devspaces-oauth-proxy-dependencies
-  namespace: openshift-devspaces
-  labels:
-    app.kubernetes.io/part-of: che.eclipse.org
-    app.kubernetes.io/component: workspaces-config
-objects:
-- apiVersion: v1
-  kind: ServiceAccount
-  metadata:
-    name: oauth-proxy
-    annotations:
-      serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"oauth-proxy"}}'
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: oauth-proxy
-  namespace: openshift-devspaces
-  labels:
-    app.kubernetes.io/part-of: che.eclipse.org
-    app.kubernetes.io/component: workspaces-config
-  annotations:
-    controller.devfile.io/mount-as: file
-    controller.devfile.io/mount-path: /var/run/oauth-client
-    kubernetes.io/service-account.name: oauth-proxy
-type: kubernetes.io/service-account-token
-```
-
-```yaml
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
@@ -71,31 +38,7 @@ spec:
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
----
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: proxy
-spec:
-  to:
-    kind: Service
-    name: proxy
-  tls:
-    termination: Passthrough
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: proxy
-  annotations:
-    service.beta.openshift.io/serving-cert-secret-name: proxy-tls
-spec:
-  ports:
-  - name: proxy
-    port: 443
-    targetPort: 8443
-  selector:
-    app: proxy
+EOF
 ```
 
 ```bash
