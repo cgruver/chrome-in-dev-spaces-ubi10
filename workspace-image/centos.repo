@@ -1,0 +1,27 @@
+[google-chrome]
+name=google-chrome
+baseurl=http://dl.google.com/linux/chrome/rpm/stable/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+
+[centos-baseos]
+name=CentOS Stream 10 - BaseOS
+baseurl=https://mirror.stream.centos.org/10-stream/BaseOS/\$basearch/os/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+
+[centos-appstream]
+name=CentOS Stream 10 - AppStream
+baseurl=https://mirror.stream.centos.org/10-stream/AppStream/\$basearch/os/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+
+[centos-crb]
+name=CentOS Stream 10 - CRB
+baseurl=https://mirror.stream.centos.org/10-stream/CRB/\$basearch/os/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0

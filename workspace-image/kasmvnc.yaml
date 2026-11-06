@@ -1,0 +1,21 @@
+network:
+  websocket_port: 8444
+  interface: 127.0.0.1
+  protocol: http
+  ssl:
+    require_ssl: false
+  use_ipv4: true
+  use_ipv6: false
+user_session:
+  session_type: exclusive
+  concurrent_connections_prompt: false
+logging:
+  log_writer_name: all
+  log_dest: logfile
+  level: 30
+desktop:
+  resolution:
+    width: 1280
+    height: 1024
+  allow_resize: true
+  pixel_depth: 24
