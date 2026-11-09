@@ -1,6 +1,9 @@
 schemaVersion: 2.3.0
 metadata:
   name: devspaces-chrome-oauth
+  attributes:
+    workspace.devfile.io/service-account-annotations:
+      serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"proxy"}}'
 components:
 - name: dev-tools
   container:

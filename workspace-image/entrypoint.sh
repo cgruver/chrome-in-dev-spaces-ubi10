@@ -6,6 +6,10 @@ then
   mkdir -p "${HOME}"
 fi
 
+# Make sure the shell is ready
+touch ${HOME}/.bashrc
+touch ${HOME}/.zshrc
+
 # Configure the container runtime to use an ephemeral graphroot, and to use fuse-overlay instead of vfs.
 if [ ! -d "${HOME}/.config/containers" ]
 then
