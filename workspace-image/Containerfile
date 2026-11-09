@@ -10,7 +10,7 @@ COPY --chown=0:0 entrypoint.sh /
 COPY --chown=0:0 centos.repo /etc/yum.repos.d/
 COPY --chown=0:0 kasmvnc.yaml /etc/kasmvnc/kasmvnc.yaml
 
-RUN dnf --disableplugin=subscription-manager install -y procps-ng openssl git tar shadow-utils bash zsh mesa-dri-drivers xorg-x11-server-Xwayland util-linux vim-minimal vim-enhanced google-chrome-stable podman dbus-x11 nginx ; \
+RUN dnf --disableplugin=subscription-manager install -y procps-ng openssl git tar shadow-utils bash zsh mesa-dri-drivers xorg-x11-server-Xwayland util-linux vim-minimal vim-enhanced google-chrome-stable dbus-x11 podman buildah skopeo python3-pip python3-devel aardvark-dns fuse-overlayfs ; \
     dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm ; \
     dnf install -y https://github.com/kasmtech/KasmVNC/releases/download/v1.5.2/kasmvncserver_fedora_42_1.5.2_x86_64.rpm ; \
     dnf clean all ; \
