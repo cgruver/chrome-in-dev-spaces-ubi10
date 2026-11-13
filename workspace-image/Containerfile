@@ -9,6 +9,7 @@ USER 0
 COPY --chown=0:0 entrypoint.sh /
 COPY --chown=0:0 centos.repo /etc/yum.repos.d/
 COPY --chown=0:0 kasmvnc.yaml /etc/kasmvnc/kasmvnc.yaml
+COPY --chown=0:0 dschrome /usr/bin/dschrome
 
 RUN dnf --disableplugin=subscription-manager install -y procps-ng openssl git tar shadow-utils bash zsh mesa-dri-drivers xorg-x11-server-Xwayland util-linux vim-minimal vim-enhanced google-chrome-stable dbus-x11 podman buildah skopeo python3-pip python3-devel aardvark-dns fuse-overlayfs ; \
     dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm ; \
@@ -38,6 +39,7 @@ RUN dnf --disableplugin=subscription-manager install -y procps-ng openssl git ta
     setcap cap_setgid+ep /usr/bin/newgidmap ; \
     #
     # Chrome Setup
+    chmod 755 /usr/bin/dschrome ; \
     chmod 644 /etc/pki/tls/private/kasmvnc.pem ; \
     rm -f /var/lib/dbus/machine-id /etc/machine-id ; \
     dbus-uuidgen --ensure=/etc/machine-id ; \

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+CHROME_URL="https://oauth-proxy-${DEVWORKSPACE_NAMESPACE}.$(echo ${CHE_DASHBOARD_URL} | cut -d'.' -f 2-)/"
+
+echo "Open the following URL in your browser to access Chrome:"
+
+echo ${CHROME_URL}
+
+export $(dbus-launch)
+
+/usr/bin/google-chrome --display=:0 --disable-gpu --disable-software-rasterizer --disable-dev-shm-usage --disable-plugins --disable-plugins-discovery --disable-notifications --disable-sync --mute-audio --dns-prefetch-disable --noremote --start-maximized > /tmp/chrome.log 2>&1 &
+
+${BROWSER} ${CHROME_URL} > /tmp/browser.log 2>&1

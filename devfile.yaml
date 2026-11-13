@@ -37,10 +37,3 @@ components:
 - volume:
     size: 20Gi
   name: projects
-commands:
-- exec:
-    commandLine: export $(dbus-launch) && /usr/bin/google-chrome --display=:0 --disable-gpu --disable-software-rasterizer --disable-dev-shm-usage --disable-plugins --disable-plugins-discovery --disable-notifications --disable-sync --mute-audio --dns-prefetch-disable --noremote --start-maximized
-    component: dev-tools
-    workingDir: '/projects'
-    label: "Start Chrome"
-  id: chrome
