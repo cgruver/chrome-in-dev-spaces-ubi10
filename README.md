@@ -43,5 +43,5 @@ EOF
 
 ## Starting Chrome:
 
-1. Execute the task `Start Chrome` with the Task Manager extension
-2. Point your browser to the route: `https://oauth-proxy-<YOUR_DEV_SPACES_USER_ID>-devspaces.apps.<CLUSTER_DOMAIN>/`
+1. Open a terminal in VS Code
+1. Run the command `dschrome`

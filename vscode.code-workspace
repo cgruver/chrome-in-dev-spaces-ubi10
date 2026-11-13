@@ -18,6 +18,6 @@
 	"settings": {
 		"editor.wordWrap": "on",
 		"files.autoSave": "off",
-		"chat.disableAIFeatures": false
+		"chat.disableAIFeatures": true
 	}
 }
